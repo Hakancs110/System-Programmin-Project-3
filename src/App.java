@@ -30,18 +30,16 @@ class Cache {
     public int hits_counter = 0;
     public int misses_counter = 0;
     public int evictions_counter = 0;
-
+    public T[][] cacheObject = null;   // create the structure of the cache
+    
     Cache(int sets_bits, int lines, int blocksize_bits) {
         this.sets = (int) Math.pow(2, sets_bits);          // S = 2^s
         this.lines = lines;
         this.blocksize = (int) Math.pow(2, blocksize_bits); // B = 2^b
         this.tag = address_size - sets - blocksize;
-
+        cacheObject = new T[sets][lines];
     }
     
-    // create the structure of the cache
-    public T[][] cacheObject = new T[sets][lines];
-
     public void writeCacheContents() {
     	System.out.println("Sets = " + sets + " lines = " + lines);
         for (int i = 0; i < sets; i++) {
@@ -59,10 +57,10 @@ public class App {
 	
     public static void main(String[] args) throws Exception {
     	// Check for the length of args
-    	// if(args.length != 15) {
-   		// 	System.out.println("Missing arguments!");
-  		// 	System.exit(1);
-  		// }
+    	if(args.length != 15) {
+    		System.out.println("Missing arguments!");
+    		System.exit(1);
+  		}
     	
     	readRAM();
         //test for the args
@@ -82,7 +80,7 @@ public class App {
         
         int args_length = args.length;
         //read the args
-        for(int i = 1; i < args_length; i += 2)
+        for(int i = 0; i < args_length; i += 2)
 		{
 			switch(args[i])
 			{
@@ -209,6 +207,5 @@ public class App {
             RAMhex[i] = String.format("%02X", RAM[i]);
             // System.out.println(RAMhex[i]);
         }
-
     }
 }
