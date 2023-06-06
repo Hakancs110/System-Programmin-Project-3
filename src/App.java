@@ -10,14 +10,37 @@ import java.io.IOException;
 class T{
     public int valid;
     public int time;
-    public int isDirty;
+    public String data;
+    public String tag;
 
 
-    T() {
-        this.valid = 0;
-        this.time = 0;
-        this.isDirty = 0;
+    T(int valid, int time, String data, String tag) {
+        this.valid = valid;
+        this.time = time;
+        this.data = data;
+        this.tag = tag;
     }
+
+    public void setValid(int valid) {
+        this.valid = valid;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    public int getValid() {
+        return valid;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+    
 
 }
 
@@ -25,28 +48,47 @@ class Cache {
     public int sets;
     public int lines;
     public int blocksize;
-    public int tag;
+
+    public String tagTemp;
     public final int address_size = 32;
     public int hits_counter = 0;
     public int misses_counter = 0;
     public int evictions_counter = 0;
     public T[][] cacheObject = null;   // create the structure of the cache
+    public int i = 0;
+    public int j = 0;
+    public int time = 0;
     
     Cache(int sets_bits, int lines, int blocksize_bits) {
         this.sets = (int) Math.pow(2, sets_bits);          // S = 2^s
         this.lines = lines;
         this.blocksize = (int) Math.pow(2, blocksize_bits); // B = 2^b
-        this.tag = address_size - sets - blocksize;
+        tagTemp = Integer.toString(address_size - sets - blocksize);
+        
         cacheObject = new T[sets][lines];
     }
     
-    public void writeCacheContents() {
-    	System.out.println("Sets = " + sets + " lines = " + lines);
-        for (int i = 0; i < sets; i++) {
-            for (int j = 0; j < lines; j++) 
-            	// set a new object for each element in the cache
-                cacheObject[i][j] = new T();               
+    public void writeCacheContents(String data) {
+        if(cacheObject[i][j] == null) {
+            misses_counter++;
+            T temp = new T(1, time, data, tagTemp);
+            cacheObject[i][j] = temp;
         }
+    	if(cacheObject[i][j].getTag().equals(tagTemp)) {
+            hits_counter++;
+            time++;
+        }
+        else {
+            misses_counter++;
+            T temp = new T(1, time, data, tagTemp);
+            cacheObject[i][j] = temp;
+        }
+
+        i++;
+            if(i > sets) {
+                i = 0;
+                j++;
+            }
     }
 } 
 
@@ -57,10 +99,10 @@ public class App {
 	
     public static void main(String[] args) throws Exception {
     	// Check for the length of args
-    	if(args.length != 15) {
-    		System.out.println("Missing arguments!");
-    		System.exit(1);
-  		}
+    	// if(args.length != 15) {
+    	// 	System.out.println("Missing arguments!");
+    	// 	System.exit(1);
+  		// }
     	
     	readRAM();
         //test for the args
@@ -113,13 +155,14 @@ public class App {
 
         //create the caches
         Cache L1I = new Cache(l1s, l1E, l1b);
-        L1I.writeCacheContents();
+        // L1I.writeCacheContents();
         
         Cache L1D = new Cache(l1s, l1E, l1b);
-        L1D.writeCacheContents();
+        // L1D.writeCacheContents();
         
         Cache L2 = new Cache(l2s, l2E, l2b);
-        L2.writeCacheContents();
+        // L2.writeCacheContents();
+        L2.writeCacheContents("data");
 
         //read the trace file
         FileReader tracefile = new FileReader(new File("./src/" +tracefilename));
@@ -144,24 +187,37 @@ public class App {
             //System.out.println(trace[i]);
             if(trace[i].equals("I")){
                 String address = trace[i+1];
+                int addressIndex = Integer.parseInt(address, 16) / 8;
+                String data = RAMhex[addressIndex];
                 String size = trace[i+2];
+
+                // L2.writeCacheContents(data);
+                // L1I.writeCacheContents(data);
                 i += 2;
+                
             }
             else if(trace[i].equals("L")) {
                 String address = trace[i+1];
+                int addressIndex = Integer.parseInt(address, 16) / 8;
+                String data = RAMhex[addressIndex];
                 String size = trace[i+2];
                 i += 2;
+                
             }
             else if(trace[i].equals("M")) {
                 String address = trace[i+1];
+                int addressIndex = Integer.parseInt(address, 16) / 8;
+                String data = RAMhex[addressIndex];
                 String size = trace[i+2];
-                String data = trace[i+3];
+                String traceData = trace[i+3];
                 i += 3;
             }
             else if(trace[i].equals("S")) {
                 String address = trace[i+1];
+                int addressIndex = Integer.parseInt(address, 16) / 8;
+                String data = RAMhex[addressIndex];
                 String size = trace[i+2];
-                String data = trace[i+3];
+                String traceData = trace[i+3];
                 i += 3;
             }
         }  
@@ -192,9 +248,15 @@ public class App {
     
     public static void writeRAMContents(String fileName) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            int count = 0;
             for (String data : RAMhex) {
                 writer.write(String.valueOf(data));
                 writer.newLine();
+                // count++;
+                // if(count == 7) {
+                //     writer.newLine();
+                //     count = 0;
+                // }
             }
             System.out.println("RAM contents written to " + fileName);
         } catch (IOException e) {
@@ -203,9 +265,40 @@ public class App {
     }
 
     public static void signedToHex() {
+        int a = 0;
+        int count = 0;
+        RAMhex[a] = "";
+        
+
         for(int i = 0; i < RAM.length; i++) {
-            RAMhex[i] = String.format("%02X", RAM[i]);
-            // System.out.println(RAMhex[i]);
+            if(count == 8) {
+                count = 0;
+                a++;
+                RAMhex[a] = "";
+            }
+            count++;
+            RAMhex[a] += String.format("%02X", RAM[i]);
         }
+    }
+
+    public static int HexToInteger(String hexString){
+        hexString = hexString.toLowerCase();
+
+        int result = 0;
+        int multiplier = 1;
+
+        for (int i = hexString.length() - 1; i >= 0; i--) {
+            char c = hexString.charAt(i);
+
+            if (Character.isDigit(c)) {
+                result += (c - '0') * multiplier;
+            } else {
+                result += (c - 'a' + 10) * multiplier;
+            }
+
+            multiplier *= 16;
+        }
+
+        return result;
     }
 }
