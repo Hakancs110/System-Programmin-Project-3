@@ -148,15 +148,17 @@ class Cache {
         return i;
     }
 
-    public void getT() {
+    public String getT() {
+        String result = "";
         for (int i = 0; i < sets; i++) {
             for (int j = 0; j < lines; j++) {
                 if (cacheObject[i][j] != null) {
-                    System.out.println(cacheObject[i][j].getTag() + " " + cacheObject[i][j].getTime() + " "
-                            + cacheObject[i][j].getValid() + " " + " " + cacheObject[i][j].getData());
+                    result += ("\ntag: " + cacheObject[i][j].getTag() + " time: " + cacheObject[i][j].getTime() + " v: "
+                            + cacheObject[i][j].getValid() + " data: " + " " + cacheObject[i][j].getData());
                 }
             }
         }
+        return result;
     }
 }
 
@@ -354,7 +356,7 @@ public class App {
             } else if (trace[i].equals("M")) {
                 String address = trace[i + 1];
                 int addressIndex = Integer.parseInt(address, 16) / 128;
-                System.out.println("addressIndex: " + addressIndex);
+                // System.out.println("addressIndex: " + addressIndex);
 
                 String data = RAMhex[addressIndex];
                 int size = Integer.parseInt(trace[i + 2]);
@@ -453,7 +455,6 @@ public class App {
 
                 i += 3;
             }
-            writeRAMContents("output.txt");
         }
         System.out.printf("L1I-hits:%d L1I-misses:%d L1I-evicitons:%d\n", L1I.hits_counter, L1I.misses_counter,
                 L1I.evictions_counter);
@@ -462,13 +463,7 @@ public class App {
         System.out.printf("L2-hits:%d L2-misses:%d L2-evicitons:%d\n", L2.hits_counter, L2.misses_counter,
                 L2.evictions_counter);
 
-        System.out.println("Final Cache States:");
-        System.out.println("L1I:");
-        L1I.getT();
-        System.out.println("L1D:");
-        L1D.getT();
-        System.out.println("L2:");
-        L2.getT();
+        writeCaches(L1I, L1D, L2);
     }
 
     public static void readRAM() {
@@ -550,4 +545,21 @@ public class App {
 
         return result;
     }
+
+    public static void writeCaches(Cache L1I, Cache L1D, Cache L2) {
+        try {
+            FileWriter writer = new FileWriter("output.txt");
+            writer.write("----------------L1I----------------");
+            writer.write("" + L1I.getT());
+            writer.write("\n----------------L1D----------------");
+            writer.write("" + L1D.getT());
+            writer.write("\n----------------L2----------------");
+            writer.write("" + L2.getT());
+            writer.close();
+            
+        } catch (IOException e) {
+            System.err.println("Error writing RAM contents: " + e.getMessage());
+        }
+    }
+
 }
