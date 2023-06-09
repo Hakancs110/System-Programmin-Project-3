@@ -253,7 +253,6 @@ public class App {
                 String size = trace[i + 2];
                 System.out.printf("%s %s, %s\n", trace[i], address, size);
 
-<<<<<<< HEAD
                 
                 if(L1I.blocksize == 8)
                 	data = RAMhex[addressIndex];
@@ -262,8 +261,6 @@ public class App {
                 else if(L1I.blocksize == 2)
                 	data = data.substring(12, data.length());
                 
-=======
->>>>>>> f7ac89d3da07377d1b55d05dfe8c24abd6a1296a
                 L1I.writeCacheContents(address, data);
                 if (L1I.isHitBool) {
                     System.out.print("  L1I hit, ");
@@ -275,7 +272,6 @@ public class App {
                     System.out.print("  L1I evict, ");
                     L1I.isEvictBool = false; // reset it to false
                 }
-<<<<<<< HEAD
                 
                 if(L2.blocksize == 8)
                 	data = RAMhex[addressIndex];
@@ -284,9 +280,6 @@ public class App {
                 else if(L2.blocksize == 2)
                 	data = data.substring(12, data.length());
                 
-=======
-
->>>>>>> f7ac89d3da07377d1b55d05dfe8c24abd6a1296a
                 int s = L2.writeCacheContents(address, data);
                 if (L2.isHitBool) {
                     System.out.print("L2 hit\n");
@@ -308,7 +301,6 @@ public class App {
                 String data = RAMhex[addressIndex];
                 String size = trace[i + 2];
 
-<<<<<<< HEAD
                 System.out.println("\nL" + " " + address + "," + size);
 
                 
@@ -319,10 +311,6 @@ public class App {
                 else if(L1D.blocksize == 2)
                 	data = data.substring(12, data.length());
                 
-=======
-                System.out.print("\nL" + " " + address + "," + size);
-
->>>>>>> f7ac89d3da07377d1b55d05dfe8c24abd6a1296a
                 L1D.writeCacheContents(address, data);
 
                 if (L1D.isHitBool) {
@@ -335,7 +323,6 @@ public class App {
                     System.out.print("  L1D evict, ");
                     L1D.isEvictBool = false; // reset it to false
                 }
-<<<<<<< HEAD
                 
                 if(L2.blocksize == 8)
                 	data = RAMhex[addressIndex];
@@ -344,9 +331,6 @@ public class App {
                 else if(L2.blocksize == 2)
                 	data = data.substring(12, data.length());
                 
-=======
-
->>>>>>> f7ac89d3da07377d1b55d05dfe8c24abd6a1296a
                 int s = L2.writeCacheContents(address, data);
                 // System.out.println("L2:");
                 // L2.getT();
@@ -361,11 +345,7 @@ public class App {
                     System.out.printf("  Place in L2 set %d, L1D\n", s);
                 } else if (L2.isEvictBool) {
                     L2.isEvictBool = false; // reset it to false
-<<<<<<< HEAD
                     System.out.println("L2 evict\n");
-=======
-                    System.out.print("L2 evict\n");
->>>>>>> f7ac89d3da07377d1b55d05dfe8c24abd6a1296a
                 }
                 i += 2;
 
@@ -376,7 +356,7 @@ public class App {
                 String data = RAMhex[addressIndex];
                 int size = Integer.parseInt(trace[i + 2]);
 
-                String olddata = data.substring(size * 2, data.length() - 1);
+                String olddata = data.substring(size * 2, data.length());
 
                 String traceData = trace[i + 3];
                 // System.out.println(data);
@@ -402,11 +382,7 @@ public class App {
                 // L2.getT();
 
                 if (L2.isHitBool) {
-<<<<<<< HEAD
                     System.out.println("L2 hit\n");
-=======
-                    System.out.print("L2 hit\n");
->>>>>>> f7ac89d3da07377d1b55d05dfe8c24abd6a1296a
                     L2.isHitBool = false; // reset it to false
                     // what should we print here as an explanation??
                 } else if (L2.isMissBool) {
@@ -415,11 +391,7 @@ public class App {
                     System.out.printf("  Place in L2 set %d, L1D\n", s);
                 } else if (L2.isEvictBool) {
                     L2.isEvictBool = false; // reset it to false
-<<<<<<< HEAD
                     System.out.println("L2 evict\n");
-=======
-                    System.out.print("L2 evict\n");
->>>>>>> f7ac89d3da07377d1b55d05dfe8c24abd6a1296a
                 }
 
                 data = traceData + olddata;
@@ -434,11 +406,7 @@ public class App {
 
                 int size = Integer.parseInt(trace[i + 2]);
 
-<<<<<<< HEAD
                 String olddata = data.substring(size * 2, data.length());
-=======
-                String olddata = data.substring(size * 2, data.length() - 1);
->>>>>>> f7ac89d3da07377d1b55d05dfe8c24abd6a1296a
 
                 System.out.println();
                 String traceData = trace[i + 3];
@@ -528,17 +496,7 @@ public class App {
             for (String data : RAMhex) {
                 writer.write(String.valueOf(data));
                 writer.newLine();
-<<<<<<< HEAD
             }
-=======
-                // count++;
-                // if(count == 7) {
-                // writer.newLine();
-                // count = 0;
-                // }
-            }
-            // System.out.println("RAM contents written to " + fileName);
->>>>>>> f7ac89d3da07377d1b55d05dfe8c24abd6a1296a
         } catch (IOException e) {
             System.err.println("Error writing RAM contents: " + e.getMessage());
         }
