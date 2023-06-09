@@ -172,6 +172,8 @@ public class App {
         // }
 
         readRAM();
+        // writeRAMContents("output.txt");
+        // System.exit(0);
 
         // test for the args
         // String[] test = {"-L1s", "0", "-L1E", "2" , "-L1b","3",
@@ -248,7 +250,7 @@ public class App {
             // System.out.println(trace[i]);
             if (trace[i].equals("I")) {
                 String address = trace[i + 1];
-                int addressIndex = Integer.parseInt(address, 16) / 8;
+                int addressIndex = Integer.parseInt(address, 16) / 128;
                 String data = RAMhex[addressIndex];
                 String size = trace[i + 2];
                 System.out.printf("%s %s, %s\n", trace[i], address, size);
@@ -297,7 +299,7 @@ public class App {
 
             } else if (trace[i].equals("L")) {
                 String address = trace[i + 1];
-                int addressIndex = Integer.parseInt(address, 16) / 8;
+                int addressIndex = Integer.parseInt(address, 16) / 128;
                 String data = RAMhex[addressIndex];
                 String size = trace[i + 2];
 
@@ -351,7 +353,8 @@ public class App {
 
             } else if (trace[i].equals("M")) {
                 String address = trace[i + 1];
-                int addressIndex = Integer.parseInt(address, 16) / 8;
+                int addressIndex = Integer.parseInt(address, 16) / 128;
+                System.out.println("addressIndex: " + addressIndex);
 
                 String data = RAMhex[addressIndex];
                 int size = Integer.parseInt(trace[i + 2]);
@@ -401,7 +404,7 @@ public class App {
 
             else if (trace[i].equals("S")) {
                 String address = trace[i + 1];
-                int addressIndex = Integer.parseInt(address, 16) / 8;
+                int addressIndex = Integer.parseInt(address, 16) / 128;
                 String data = RAMhex[addressIndex];
 
                 int size = Integer.parseInt(trace[i + 2]);
@@ -480,6 +483,10 @@ public class App {
                 System.err.println("Error reading RAM file");
                 return;
             }
+            if(bytesRead == -1){
+                System.err.println("Error reading RAM file");
+                return;
+            }
         } catch (IOException e) {
             System.err.println("Error reading RAM file: " + e.getMessage());
             return;
@@ -488,14 +495,19 @@ public class App {
         // System.out.println("RAM data read successfully.");
 
         signedToHex();
-        writeRAMContents("output.txt");
+        // writeRAMContents("output.txt");
     }
 
     public static void writeRAMContents(String fileName) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             for (String data : RAMhex) {
+                if(data == null){
+                    System.err.println("bitti");
+                    return;
+                }
                 writer.write(String.valueOf(data));
                 writer.newLine();
+                
             }
         } catch (IOException e) {
             System.err.println("Error writing RAM contents: " + e.getMessage());
