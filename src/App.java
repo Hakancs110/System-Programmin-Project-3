@@ -167,20 +167,16 @@ public class App {
     public static String[] RAMhex;
 
     public static void main(String[] args) throws Exception {
-        // Check for the length of args
-        // if(args.length != 15) {
-        // System.out.println("Missing arguments!");
-        // System.exit(1);
-        // }
+        //Check for the length of args 
+    	// command line arguments include: 
+    	// ./App.java -L1s 0 -L1E 2 -L1b 3 -L2s 1 -L2E 2 -L2b 3 -t test.trace
+         if(args.length != 15) {
+        	 System.out.println("Missing arguments!");
+        	 System.exit(1);
+         }
 
         readRAM();
-        // writeRAMContents("output.txt");
-        // System.exit(0);
 
-        // test for the args
-        // String[] test = {"-L1s", "0", "-L1E", "2" , "-L1b","3",
-        // "-L2s","1" ,"-L2E", "2", "-L2b", "3",
-        // "-t", "t.trace"};
 
         int l1s = 0;
         int l1E = 0;
@@ -194,7 +190,7 @@ public class App {
 
         int args_length = args.length;
         // read the args
-        for (int i = 0; i < args_length; i += 2) {
+        for (int i = 1; i < args_length; i += 2) {
             switch (args[i]) {
                 case "-L1s":
                     l1s = Integer.parseInt(args[i + 1]);
@@ -290,12 +286,12 @@ public class App {
                     L2.isHitBool = false; // reset it to false
                     // what should we print here as an explanation??
                 } else if (L2.isMissBool) {
-                    System.out.print("L2 miss\n");
+                    System.out.println("L2 miss");
                     L2.isMissBool = false; // reset it to false
-                    System.out.printf("  Place in L2 set %d, L1I\n", s);
+                    System.out.printf("  Place in L2 set %d, L1I\n\n", s);
                 } else if (L2.isEvictBool) {
                     L2.isEvictBool = false; // reset it to false
-                    System.out.print("L2 evict\n");
+                    System.out.println("L2 evict\n");
                 }
                 i += 2;
 
@@ -305,7 +301,7 @@ public class App {
                 String data = RAMhex[addressIndex];
                 String size = trace[i + 2];
 
-                System.out.println("\nL" + " " + address + "," + size);
+                System.out.println("L" + " " + address + "," + size);
 
                 
                 if(L1D.blocksize == 8)
@@ -344,9 +340,9 @@ public class App {
                     L2.isHitBool = false; // reset it to false
                     // what should we print here as an explanation??
                 } else if (L2.isMissBool) {
-                    System.out.print("L2 miss\n");
+                    System.out.println("L2 miss\n");
                     L2.isMissBool = false; // reset it to false
-                    System.out.printf("  Place in L2 set %d, L1D\n", s);
+                    System.out.printf("  Place in L2 set %d, L1D\n\n", s);
                 } else if (L2.isEvictBool) {
                     L2.isEvictBool = false; // reset it to false
                     System.out.println("L2 evict\n");
@@ -366,7 +362,7 @@ public class App {
                 String traceData = trace[i + 3];
                 // System.out.println(data);
 
-                System.out.println("\nM" + " " + address + "," + size + ", " + traceData);
+                System.out.println("M" + " " + address + "," + size + ", " + traceData);
                 L1D.writeCacheContents(address, data);
                 // System.out.println("----------L1D:");
                 // L2.getT();
@@ -420,7 +416,7 @@ public class App {
 
                 // System.out.println(data);
 
-                System.out.println("\nS" + " " + address + "," + size + ", " + traceData);
+                System.out.println("S" + " " + address + "," + size + ", " + traceData);
                 L1D.writeCacheContents(address, data);
                 // System.out.println("----------L1D:");
                 // L2.getT();
@@ -450,7 +446,7 @@ public class App {
                     System.out.printf("  Place in L2 set %d, L1D\n", s);
                 } else if (L2.isEvictBool) {
                     L2.isEvictBool = false; // reset it to false
-                    System.out.print("L2 evict\n");
+                    System.out.println("L2 evict\n");
                 }
 
                 i += 3;
@@ -548,7 +544,7 @@ public class App {
 
     public static void writeCaches(Cache L1I, Cache L1D, Cache L2) {
         try {
-            FileWriter writer = new FileWriter("output.txt");
+            FileWriter writer = new FileWriter("Cache.txt");
             writer.write("----------------L1I----------------");
             writer.write("" + L1I.getT());
             writer.write("\n----------------L1D----------------");
@@ -558,7 +554,7 @@ public class App {
             writer.close();
             
         } catch (IOException e) {
-            System.err.println("Error writing cache contents: " + e.getMessage());
+            System.err.println("Error writing RAM contents: " + e.getMessage());
         }
     }
 
